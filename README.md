@@ -1,5 +1,9 @@
 #thintalk
 
+**Please NOTE:**
+> This module is not yet stable, but will be it very soon.
+> Until version 0.2.0 use it on own risk.
+
 **Thintalk is a thin RPC layer over different transport layers.
 
 > RPC is an acronyms for _Remote procedure call_, meaning that the protocol is
