@@ -1,0 +1,29 @@
+{
+  "name": "thintalk",
+  "description": "Very thin RPC layer using TPC and IPC",
+  "version": "0.1.0",
+  "author": "Andreas Madsen <amwebdk@gmail.com>",
+  "scripts": {
+    "test": "vows test/simple/test-* --spec --isolate"
+  },
+  "main": "./lib/module.js",
+  "repository" : {
+    "type": "git",
+    "url": "git://github.com/AndreasMadsen/thintalk.git"
+  },
+  "keywords": [
+    "RPC",
+    "IPC",
+    "TCP",
+    "function",
+    "callback",
+    "dnode-protocol"
+  ],
+  "devDependencies": {
+    "vows" :  "0.6.x"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "0.6.x"
+  }
+}
