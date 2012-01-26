@@ -6,11 +6,10 @@
 var common = require('../common'),
 	thintalk = require(common.modulePath),
     assert = require('assert'),
-    path = require('path'),
     child_process = require('child_process');
 
 module.exports = function (layer) {
-	var listenerProcess = child_process.fork(path.join(common.fixtureDir, '/lisenter.js'), [layer]),
+	var listenerProcess = child_process.fork(common.fixture('lisenter'), [layer]),
 		requester = thintalk();
 	
 	requester.on('error', function (err) {
