@@ -2,7 +2,7 @@
  * Copyright (c) 2012 Andreas Madsen
  * MIT License
  */
- 
+
 var path = require('path');
 
 // root directory of this module
@@ -20,6 +20,15 @@ function makepath(folder) {
 		return path.join(exports.root, 'test', folder, name + '.js');
 	};
 }
+
+// setup vows batches
+exports.setupAbstractBatch = function (vows, name, layer) {
+	var abstract = require(exports.abstract(name));
+
+	abstract(layer).forEach(function (batch) {
+		vows.addBatch(batch);
+	});
+};
 
 // common port used
 exports.PORT = 3145;

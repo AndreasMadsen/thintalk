@@ -4,9 +4,8 @@
  */
 
 var common = require('../common'),
-	vows = require('vows'),
-	test = require(common.abstract('receiver'));
+	vows = require('vows');
 
-vows.describe('Testing TCP abstract layer')
-	.addBatch(test('TCP'))
-	.exportTo(module);
+var test = vows.describe('Testing TCP abstract layer');
+common.setupAbstractBatch(test, 'receiver', 'TCP');
+test.exportTo(module);

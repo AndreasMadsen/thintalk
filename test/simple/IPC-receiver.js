@@ -4,9 +4,8 @@
  */
 
 var common = require('../common'),
-	vows = require('vows'),
-	test = require(common.abstract('receiver'));
+	vows = require('vows');
 
-vows.describe('Testing IPC abstract layer')
-	.addBatch(test('IPC'))
-	.exportTo(module);
+var test = vows.describe('Testing IPC abstract layer');
+common.setupAbstractBatch(test, 'receiver', 'IPC');
+test.exportTo(module);
