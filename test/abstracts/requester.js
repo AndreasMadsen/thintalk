@@ -151,6 +151,11 @@ module.exports = function (layer) {
 					assert.equal(err.message, 'Could not make a request, channel is offline')
 				}
 			}
+		},
+
+		teardown: function () {
+			// this will execute when all contents has been tested
+			listenerProcess.kill();
 		}
 	}];
 };
