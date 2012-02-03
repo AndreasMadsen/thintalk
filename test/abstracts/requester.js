@@ -102,19 +102,14 @@ module.exports = function (layer) {
 			topic: function () {
 				var self = this;
 
-				var remoteObject;
-				requester.on('connect', function (remote) {
-					remoteObject = remote;
-				});
-
 				function close() {
 					requester.removeListener('error', error);
-					self.callback(null, requester, remoteObject);
+					self.callback(null, requester);
 				}
 
 				function error(err) {
 					requester.removeListener('close', close);
-					self.callback(err, null, remoteObject);
+					self.callback(err, null);
 				}
 
 				requester.once('error', error);
