@@ -27,49 +27,50 @@ module.exports = function (layer) {
 		lisenter.listen(layer, common.PORT);
 	}
 
+	lisenter.on('listening', function () {
+		requesterProcess.send({what: 'connect'});
+	});
+
 	return [{
 		// first batch of tests
 		'when ready event is emitted': {
 			topic: function () {
 				var self = this;
 				lisenter.on('listening', function () {
-					console.log('hallo');
 					self.callback(null, lisenter);
 				});
 			},
 
 			'the online state is true': function (error, result) {
 				assert.isTrue(result.online);
-			},
-
-			'when listening on listening event again': {
-				topic: function () {
-					var self = this;
-					lisenter.on('listening', function () {
-						self.callback(null, lisenter);
-					});
-				},
-
-				'it too will emit properly': function (error, result) {
-					assert.isTrue(result.online);
-				}
 			}
 		},
 
+		'when connection has been made': {
+			topic: function () {
+				var self = this;
+				lisenter.on('connection', function () {
+					self.callback(null, lisenter);
+				});
+			},
+
+			'connection event will emit': function (error, result) {
+				assert.isNull(error);
+			}
+		}
+
+	}, {
 		'when we request a method there exist': {
 			topic: function () {
 				var self = this;
+				requesterProcess.send({
+					what: 'request',
+					method: 'add',
+					args : [2, 3]
+				});
 
-				lisenter.on('listening', function () {
-					requesterProcess.send({
-						what: 'request',
-						method: 'add',
-						args : [2, 3]
-					});
-
-					lisenter.on('request', function (/* name, args, result */) {
-						self.callback(this.error, arguments);
-					});
+				lisenter.on('request', function (/* name, args, result */) {
+					self.callback(this.error, arguments);
 				});
 			},
 
@@ -90,17 +91,14 @@ module.exports = function (layer) {
 		'when we requiest a method there throw': {
 			topic: function () {
 				var self = this;
+				requesterProcess.send({
+					what: 'request',
+					method: 'fail',
+					args : [2, 3]
+				});
 
-				lisenter.on('listening', function () {
-					requesterProcess.send({
-						what: 'request',
-						method: 'fail',
-						args : [2, 3]
-					});
-
-					lisenter.on('request', function (/* name, args, result */) {
-						self.callback(this.error, arguments);
-					});
+				lisenter.on('request', function (/* name, args, result */) {
+					self.callback(this.error, arguments);
 				});
 			},
 

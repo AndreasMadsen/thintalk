@@ -20,8 +20,14 @@ requester.on('connect', function (remote) {
 	});
 });
 
-if (process.argv[2] === 'IPC') {
-	requester.connect('IPC', process);
-} else if (process.argv[2] === 'TCP') {
-	requester.connect('TCP', common.PORT);
-}
+process.on('message', function connectHandle (msg) {
+	if (msg.what === 'connect') {
+		process.removeListener('message', connectHandle);
+
+		if (process.argv[2] === 'IPC') {
+			requester.connect('IPC', process);
+		} else if (process.argv[2] === 'TCP') {
+			requester.connect('TCP', common.PORT);
+		}
+	}
+});
