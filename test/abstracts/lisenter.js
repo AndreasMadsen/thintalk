@@ -60,6 +60,9 @@ module.exports = function (layer) {
 		}
 
 	}, {
+		// Second batch
+		// we can assume the connection has been made
+
 		'when we request a method there exist': {
 			topic: function () {
 				var self = this;
@@ -117,7 +120,7 @@ module.exports = function (layer) {
 			}
 		}
 	}, {
-		// second batch of test
+		// Third batch of test
 		// we will close in this batch so no more should follow
 
 		'when closeing the lisenter': {
