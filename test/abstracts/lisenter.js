@@ -31,14 +31,30 @@ module.exports = function (layer) {
 		requesterProcess.send({what: 'connect'});
 	});
 
+	// check listening event now
+	var isListening = false;
+	lisenter.on('listening', function () {
+		isListening = true;
+	});
+
+	// check connection event now
+	var isConnection = false;
+	lisenter.on('connection', function () {
+		isConnection = true;
+	});
+
 	return [{
 		// first batch of tests
-		'when ready event is emitted': {
+		'when listening event is emitted': {
 			topic: function () {
 				var self = this;
-				lisenter.on('listening', function () {
+				if (isListening) {
 					self.callback(null, lisenter);
-				});
+				} else {
+					lisenter.on('listening', function () {
+						self.callback(null, lisenter);
+					});
+				}
 			},
 
 			'the online state is true': function (error, result) {
@@ -49,9 +65,13 @@ module.exports = function (layer) {
 		'when connection has been made': {
 			topic: function () {
 				var self = this;
-				lisenter.on('connection', function () {
+				if (isConnection) {
 					self.callback(null, lisenter);
-				});
+				} else {
+					lisenter.on('connection', function () {
+						self.callback(null, lisenter);
+					});
+				}
 			},
 
 			'connection event will emit': function (error, result) {
