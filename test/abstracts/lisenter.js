@@ -170,12 +170,9 @@ module.exports = function (layer) {
 
 			'the close event will emit': function (error, result) {
 				assert.ifError(error);
-				assert.ifError(result);
 			},
 
 			'the online state will become false': function (error, result) {
-				assert.ifError(error);
-				console.log(result);
 				assert.isFalse(result.online);
 			},
 
@@ -183,11 +180,10 @@ module.exports = function (layer) {
 				topic: function () {
 					var self = this;
 
-					console.log('new topic');
-
 					requesterProcess.send({
 						what: 'closed'
 					});
+
 					requesterProcess.on('message', function(msg) {
 						if (msg.what === 'closed') {
 							self.callback(msg.error, msg.online);
