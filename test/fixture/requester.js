@@ -20,6 +20,11 @@ requester.on('connect', function (remote) {
 	});
 });
 
+var isClosed = false;
+requester.on('close', function () {
+	isClosed = true;
+});
+
 process.on('message', function connectHandle (msg) {
 	if (msg.what === 'connect') {
 		process.removeListener('message', connectHandle);
@@ -28,6 +33,21 @@ process.on('message', function connectHandle (msg) {
 			requester.connect('IPC', process);
 		} else if (process.argv[2] === 'TCP') {
 			requester.connect('TCP', common.PORT);
+		}
+
+	}
+});
+
+process.on('message', function closeHandle (msg) {
+	if (msg.what === 'closed') {
+		process.removeListener('message', closeHandle);
+
+		if (isClosed) {
+			process.send({what: 'closed', online: requester.online, error: null});
+		} else {
+			requester.on('close', function () {
+				process.send({what: 'closed', online: requester.online, error: null});
+			});
 		}
 	}
 });
