@@ -33,13 +33,13 @@ module.exports = function (layer) {
 
 	// check listening event now
 	var isListening = false;
-	lisenter.on('listening', function () {
+	lisenter.once('listening', function () {
 		isListening = true;
 	});
 
 	// check connection event now
 	var isConnection = false;
-	lisenter.on('connection', function () {
+	lisenter.once('connection', function () {
 		isConnection = true;
 	});
 
@@ -51,7 +51,7 @@ module.exports = function (layer) {
 				if (isListening) {
 					self.callback(null, lisenter);
 				} else {
-					lisenter.on('listening', function () {
+					lisenter.once('listening', function () {
 						self.callback(null, lisenter);
 					});
 				}
@@ -68,7 +68,7 @@ module.exports = function (layer) {
 				if (isConnection) {
 					self.callback(null, lisenter);
 				} else {
-					lisenter.on('connection', function () {
+					lisenter.once('connection', function () {
 						self.callback(null, lisenter);
 					});
 				}
@@ -92,8 +92,11 @@ module.exports = function (layer) {
 					args : [2, 3]
 				});
 
-				lisenter.on('request', function (/* name, args, result */) {
-					self.callback(this.error, arguments);
+				lisenter.on('request', function removeMe(error, name, args, result) {
+					if (name !== 'add') return;
+
+					self.callback(error, [name, args, result]);
+					lisenter.removeListener('request', removeMe);
 				});
 			},
 
@@ -107,7 +110,7 @@ module.exports = function (layer) {
 			},
 
 			'callback is called with a result': function (error, result) {
-				assert.equal(result[2], 6);
+				assert.equal(result[2], 5);
 			}
 		},
 
@@ -120,8 +123,11 @@ module.exports = function (layer) {
 					args : [2, 3]
 				});
 
-				lisenter.on('request', function (/* name, args, result */) {
-					self.callback(this.error, arguments);
+				lisenter.on('request', function removeMe(error, name, args, result) {
+					if (name !== 'fail') return;
+
+					self.callback(error, [name, args, result]);
+					lisenter.removeListener('request', removeMe);
 				});
 			},
 
@@ -135,15 +141,15 @@ module.exports = function (layer) {
 			},
 
 			'callback is called without a result': function (error, result) {
-				assert.isUndefined(result[2]);
-				assert.length(result, 3);
+				assert.isNull(result[2]);
+				assert.lengthOf(result, 3);
 			}
 		}
 	}, {
 		// Third batch of test
 		// we will close in this batch so no more should follow
 
-		'when closeing the lisenter': {
+		'when we close the lisenter': {
 			topic: function () {
 				var self = this;
 
@@ -164,16 +170,20 @@ module.exports = function (layer) {
 
 			'the close event will emit': function (error, result) {
 				assert.ifError(error);
+				assert.ifError(result);
 			},
 
 			'the online state will become false': function (error, result) {
 				assert.ifError(error);
+				console.log(result);
 				assert.isFalse(result.online);
 			},
 
 			'the requester will': {
 				topic: function () {
 					var self = this;
+
+					console.log('new topic');
 
 					requesterProcess.send({
 						what: 'closed'
@@ -187,6 +197,10 @@ module.exports = function (layer) {
 
 				'emit close': function (error, result) {
 					assert.ifError(error);
+					assert.ifError(result);
+				},
+
+				'become ofline': function (error, result) {
 					assert.equal(result, false);
 				}
 			}

@@ -12,7 +12,7 @@ requester.on('connect', function (remote) {
 	process.on('message', function (msg) {
 
 		if (msg.what === 'request') {
-			remote[msg.method].apply(remote, msg.args);
+			remote[msg.method].apply(remote, (msg.args).concat([function () {}]) );
 		} else if (msg.what === 'fail') {
 			throw new Error("critical error");
 		}
