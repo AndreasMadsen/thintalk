@@ -126,7 +126,7 @@ module.exports = function (layer) {
 				assert.isFalse(result.online);
 			},
 
-			'when atempting to make a request': {
+			'and atempting to make a request': {
 				topic: function () {
 					var self = this;
 
@@ -143,7 +143,7 @@ module.exports = function (layer) {
 
 				'it will fail': function (err, result) {
 					assert.instanceOf(err, Error);
-					assert.equal(err.message, 'Could not make a request, channel is offline')
+					assert.equal(err.message, 'Could not make a request, channel is offline');
 				}
 			}
 		},
