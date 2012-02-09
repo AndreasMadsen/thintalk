@@ -1,10 +1,5 @@
 #thintalk
 
-###Please NOTE:
-
-> This module is not yet stable, but will be it very soon.
-> Until version 0.2.0 use it on own risk.
-
 **Thintalk is a thin RPC layer over different transport layers.**
 
 > RPC is an acronyms for _Remote procedure call_, meaning that the protocol is
@@ -12,7 +7,7 @@
 > arguments parsed to an callback.
 > The result is you can call code on the _server_ without transferee the entire
 > function source code.
-> 
+>
 > The benefits of `thintalk` compared to `nowJS` or `dnode` is that this is very
 > thin resulting in minimal overhead. However the cost is that this module is not
 > meant to be used in combination with none-node clients like browsers.
@@ -55,11 +50,11 @@ lisenter.listen('IPC', require('child_process').fork('./child.js'));
 var thintalk = require('thintalk');
 
 var requester = thintalk(function (remote) {
-	
+
 	remote.add(2, 4, function (result) {
 	  console.log(result); // 6
 	});
-	
+
 }).connect('TCP', 4000);
 
 requester.on('error', function (err) {
@@ -73,11 +68,11 @@ requester.on('error', function (err) {
 var thintalk = require('thintalk');
 
 var requester = thintalk(function (remote) {
-	
+
 	remote.add(2, 4, function (result) {
 	  console.log(result); // 6
 	});
-	
+
 }).connect('TCP', 4000);
 
 requester.on('error', function (err) {
