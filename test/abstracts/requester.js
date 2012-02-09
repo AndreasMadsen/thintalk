@@ -142,6 +142,7 @@ module.exports = function (layer) {
 				},
 
 				'it will fail': function (err, result) {
+					assert.isNull(result);
 					assert.instanceOf(err, Error);
 					assert.equal(err.message, 'Could not make a request, channel is offline');
 				}
