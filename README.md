@@ -19,7 +19,7 @@
 ## Installation
 
 ```sheel
-npm install `thintalk`
+npm install thintalk
 ```
 
 ## API documentation
