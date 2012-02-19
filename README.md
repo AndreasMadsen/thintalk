@@ -15,6 +15,7 @@
 ## Features
  - Simple RPC layer with minimal overhead.
  - Same API independent of the transport layer.
+ - Extendable abstraction layer.
 
 ## Installation
 
@@ -24,29 +25,104 @@ npm install thintalk
 
 ## API documentation
 
+The modules is required by using the following code:
+
+```JavaScript
+var thintalk = require('thintalk');
+```
+
+The variable `thintalk` now contain a function, depending on how it is called
+a `Listener` or a `Requester` object is returned.
+
 ###The listener
 
-```javascript
-var thintalk = require('thintalk');
+A `Lisenter` is return if the `thintalk` function was called with a `object`.
+The given object should contain all `procedures` there can be called by the `requester`.
+Note that you are not allowed to add or remove procedures later.
 
+```JavaScript
 var listener = thintalk({
   add: function (a, b) {
     this.callback(a + b);
   }
 });
+```
 
+#### Lisenter.listen
+
+The `lisenter` object must listen on something. this is done by calling the `.listen`
+method. The first argument in the `.listen` method specify the layer the other arguments
+are send to the layer handler. 
+
+Note that you can call listen as many times as you want.
+
+```JavaScript
+lisenter.listen('TCP', 4001);
+lisenter.listen('TCP', 4002);
+
+var child = require('child_process').fork('./child.js');
+lisenter.listen('IPC', child);
+```
+
+#### Lisenter.close
+
+To close the `lisenter` simply call `.close`, note that all layers will be closed.
+
+#### Events
+
+Any errors there might occurre should be emitted though the `error` event, if not
+then it is properly a bug.
+
+```JavaScript
 lisenter.on('error', function (err) {
 	throw err;
 });
-
-// Yes you can listen on multiply transport layers
-lisenter.listen('TCP', 4000);
-lisenter.listen('IPC', require('child_process').fork('./child.js'));
 ```
 
-###The TCP requester
+The `listening` is emitted when a new lisenter layer is assigned and it is ready to rescive
+requests.
 
-```javascript
+```JavaScript
+lisenter.on('listening', function () {
+  console.log('layer ready');
+});
+```
+
+When a `requester` is connected to the `lisenter` object a `connection` event is emitted: 
+
+```JavaScript
+lisenter.on('connection', function () {
+  console.log('requester connected');
+});
+```
+
+When closeing the `lisenter` a `close` event is emitted when all layers are closed.
+
+```JavaScript
+lisenter.on('close', function () {
+  console.log('lisenter closed');
+});
+```
+
+When a `requester` make a `procedure request` a `request` event is emitted when a result
+is found or an errors accoured.
+
+```JavaScript
+lisenter.on('request', function (error, name, args, result) {
+  console.log('The function ' + name + ' was called with the arguments ' + args.join(', '));
+  
+  if (error !== null) {
+    console.log('But the function called failed:');
+    console.error(error.stack);
+  } else {
+    console.log('the result was ' + result);
+  }
+});
+```
+
+###The Requester
+
+```JavaScript
 var thintalk = require('thintalk');
 
 var requester = thintalk(function (remote) {
