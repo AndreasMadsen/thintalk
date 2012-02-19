@@ -151,7 +151,7 @@ requester.connect('TCP', 4000);
 To connect to a process using the IPC layer.
 
 ```JavaScript
-requester.connect('TCP', process);
+requester.connect('IPC', process);
 ```
 
 #### Requester.close
