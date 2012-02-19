@@ -75,7 +75,7 @@ then it is properly a bug.
 
 ```JavaScript
 lisenter.on('error', function (err) {
-	throw err;
+  throw err;
 });
 ```
 
@@ -122,37 +122,76 @@ lisenter.on('request', function (error, name, args, result) {
 
 ###The Requester
 
+The `thintalk` function will return a `Requester` object when a `function` or no arguments is given.
+
+As with the `Lisenter` there is no API diffrence between the diffrence layers you might use.
+However a `Requester` can only connect to one remote.
+
+If a function was given it is called with a `remote` object as its only arguments. The remote object
+contain the `procedures` defined in the `lisenter`, however they are only `wrappers` there call the remote
+`procedure`. The last argument in the `wrapper` are a callback containing a `result` argument.
+
 ```JavaScript
-var thintalk = require('thintalk');
-
 var requester = thintalk(function (remote) {
-
-	remote.add(2, 4, function (result) {
-	  console.log(result); // 6
-	});
-
-}).connect('TCP', 4000);
-
-requester.on('error', function (err) {
-	throw err;
+  remote.add(2, 4, function (result) {
+    console.log(result); // 6
+  });
 });
 ```
 
-###The IPC requester
+You connect to the remote by using the `.connect` method. The API is the same with `.listen` the
+first argument specify the layer and the other arguments are send to the layer handler. 
 
-```javascript
-var thintalk = require('thintalk');
+To connect to a port using the the TCP layer:
 
-var requester = thintalk(function (remote) {
+```JavaScript
+requester.connect('TCP', 4000);
+```
 
-	remote.add(2, 4, function (result) {
-	  console.log(result); // 6
-	});
+To connect to a process using the IPC layer.
 
-}).connect('TCP', 4000);
+```JavaScript
+requester.connect('TCP', process);
+```
 
+#### Requester.close
+
+To close the `requester` simply call `.close`.
+
+```JavaScript
+requester.close();
+```
+
+#### Events
+
+Any errors there might occurre should be emitted though the `error` event, if not
+then it is properly a bug.
+
+```JavaScript
 requester.on('error', function (err) {
-	throw err;
+  throw err;
+});
+```
+
+When calling `.close` from the `requester` or the attached `lisenter` a `close` event
+is emitted when the `requester` is closed.
+
+```JavaScript
+requester.on('close', function () {
+  console.log('requester closed');
+});
+```
+
+After calling `.connect` a `connect` event is emitted when every this is setup. The event
+handler is called with the `remote` object there also was given in `function` when calling
+the `thintalk` method.
+
+
+```JavaScript
+requester.on('connect', function (remote) {
+  remote.add(2, 4, function (result) {
+    console.log(result); // 6
+  });
 });
 ```
 
