@@ -52,7 +52,7 @@ var listener = thintalk({
 
 The `lisenter` object must listen on something. this is done by calling the `.listen`
 method. The first argument in the `.listen` method specify the layer the other arguments
-are send to the layer handler. 
+are send to the layer handler.
 
 Note that you can call listen as many times as you want.
 
@@ -88,7 +88,7 @@ lisenter.on('listening', function () {
 });
 ```
 
-When a `requester` is connected to the `lisenter` object a `connection` event is emitted: 
+When a `requester` is connected to the `lisenter` object a `connection` event is emitted:
 
 ```JavaScript
 lisenter.on('connection', function () {
@@ -110,7 +110,7 @@ is found or an errors accoured.
 ```JavaScript
 lisenter.on('request', function (error, name, args, result) {
   console.log('The function ' + name + ' was called with the arguments ' + args.join(', '));
-  
+
   if (error !== null) {
     console.log('But the function called failed:');
     console.error(error.stack);
@@ -140,7 +140,7 @@ var requester = thintalk(function (remote) {
 ```
 
 You connect to the remote by using the `.connect` method. The API is the same with `.listen` the
-first argument specify the layer and the other arguments are send to the layer handler. 
+first argument specify the layer and the other arguments are send to the layer handler.
 
 To connect to a port using the the TCP layer:
 
@@ -194,6 +194,30 @@ requester.on('connect', function (remote) {
   });
 });
 ```
+
+## Writeing a layer interface
+
+There are two buildin layers `IPC` and `TCP`, they work very diffrent but use the same
+API abstaction to create an RPC interface. You can find the layers in `/lib/layers`, they
+are highly documented and should be easy to follow.
+
+The general pattern is that there are three exported constructor functions, there inherts
+from a abstraction object. You will find that there is a little diffrence between the buildin
+layer and user layers. The buildin layers require an internal `core.js` module however you should
+just require the `thinktalk` module. This module will exports `ListenerAbstract`, `CommunicationAbstract`
+and `RequesterAbstract` just as the `core.js` module.
+
+You will also need to use the `setLayer` function, this takes 2 arguments the first is the
+`layer name` the second is export from the required user layer.
+
+```JavaScript
+var layer = require('layer');
+var thintalk = require('thintalk');
+thintalk.setLayer('layer', layer);
+```
+
+You can the use `lisenter.listen('layer', options ...)` and `requester.connect('layer', options ...)`
+just as with the `TCP` and `IPC` layer.
 
 ##License
 
