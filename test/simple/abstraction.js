@@ -61,6 +61,36 @@ vows.describe('Testing abstraction interface').addBatch({
 		'the .layers has been filled': function (result) {
 			assert.isDefined(result);
 		}
-	}
+	},
+
+  'when requesting an unknown layer' : {
+    'using requester': {
+      topic: function () {
+        var requester = thintalk();
+        requester.once('error', this.callback.bind(this, null));
+        requester.connect('unknown');
+      },
+
+      'an error will be emitted': function (error) {
+        assert.equal(error.message, 'The layer unknown do not exist.');
+      }
+    },
+
+    'using listener': {
+      topic: function () {
+        var listener = thintalk({
+          add: function (a, b) {
+            return a + b;
+          }
+        });
+        listener.once('error', this.callback.bind(this, null));
+        listener.listen('unknown');
+      },
+
+      'an error will be emitted': function (error) {
+        assert.equal(error.message, 'The layer unknown do not exist.');
+      }
+    }
+  }
 
 }).exportTo(module);
