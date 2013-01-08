@@ -23,6 +23,29 @@
 npm install thintalk
 ```
 
+## Example
+
+```javascript
+var listener = thintalk({
+  add: function (a, b) {
+    this.callback(a + b);
+  }
+});
+
+lisenter.on('listening', function () {
+
+  var requester = thintalk(function (remote) {
+    remote.add(2, 4, function (result) {
+      console.log(result); // 6
+    });
+  });
+  requester.connect('IPC', 4001);
+  
+});
+```
+
+lisenter.listen('TCP', 4001);
+
 ## API documentation
 
 The modules is required by using the following code:
