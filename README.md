@@ -42,9 +42,9 @@ lisenter.on('listening', function () {
   requester.connect('IPC', 4001);
   
 });
-```
 
 lisenter.listen('TCP', 4001);
+```
 
 ## API documentation
 
