@@ -12,6 +12,13 @@
 > thin resulting in minimal overhead. However the cost is that this module is not
 > meant to be used in combination with none-node clients like browsers.
 
+## Deprecated
+
+Since [dnode](https://github.com/substack/dnode) got ride of socket.io and became
+a streaming interface and node.js got support for real dublex sockets in forks I
+see no need this module. However pull requests will be reviewed and ownership is
+given if interest is shown.
+
 ## Features
  - Simple RPC layer with minimal overhead.
  - Same API independent of the transport layer.
